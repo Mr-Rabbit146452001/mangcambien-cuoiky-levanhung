@@ -64,7 +64,8 @@ mangcambien-cuoiky-levanhung/
 ├── model-parameters/       # Tham số mô hình (cấu hình trích xuất đặc trưng, số lượng nhãn)
 ├── tflite-model/           # File lưu trữ đồ thị mạng nơ-ron và trọng số lượng tử hóa INT8
 ├── README.md               # Tài liệu hướng dẫn sử dụng và giới thiệu đề tài (File này)
-└── inference_kws.cpp       # Mã nguồn thực thi suy luận mẫu trên thiết bị vi điều khiển ESP32
+├── inference_kws.cpp       # Mã nguồn thực thi suy luận mẫu trên thiết bị vi điều khiển ESP32
+└── simulate_kws_gui.py    # Trình giả lập phần cứng ảo (Virtual Hardware Simulator) bằng Python GUI
 ```
 
 ---
@@ -91,3 +92,32 @@ mangcambien-cuoiky-levanhung/
 4. Chọn đúng Board (ví dụ: *ESP32 Dev Module*) và đúng Cổng COM nhận diện được tại mục `Tools` > `Port`.
 5. Bấm nút **Upload** (mũi tên hướng sang phải) trên thanh công cụ để biên dịch và nạp code xuống ESP32.
 6. Mở **Serial Monitor** (phím tắt `Ctrl + Shift + M`) với tốc độ baud `115200` để theo dõi nhật ký hoạt động và kết quả nhận dạng khẩu lệnh trực tiếp.
+
+---
+
+## 6. Hướng Dẫn Chạy Trình Giả Lập Phần Cứng Ảo (Python GUI)
+
+Để chạy mô phỏng hoạt động của hệ thống ngoại tuyến ngay trên máy tính mà không cần kết nối bo mạch thật (sử dụng chính microphone máy tính của bạn làm bộ thu âm thanh và hiển thị mạch ảo ESP32 + INMP441 + 2x LED):
+
+### Bước 1: Cài đặt các thư viện phụ trợ
+Mở Terminal / Command Prompt và chạy lệnh cài đặt thư viện nhận dạng giọng nói:
+```bash
+pip install SpeechRecognition pyaudio
+```
+*Lưu ý:* Đối với hệ điều hành Windows, nếu cài đặt `pyaudio` thông qua pip gặp lỗi, bạn có thể sử dụng các nút bấm giả lập thủ công được tích hợp sẵn trên giao diện để kiểm thử chức năng của mạch mà không cần dùng đến microphone.
+
+### Bước 2: Khởi động trình giả lập
+Di chuyển Terminal/cmd vào thư mục chứa file `simulate_kws_gui.py` và thực thi lệnh:
+```bash
+python simulate_kws_gui.py
+```
+
+### Bước 3: Thực nghiệm và kiểm thử
+1. Nói rõ ràng từ khóa **"hùng ơi"** vào microphone máy tính của bạn để kích hoạt hệ thống. 
+   - Đèn LED trạng thái màu vàng ảo (GPIO 12) trên sơ đồ mạch sẽ phát sáng trong **5 giây** để chờ lệnh tiếp theo.
+2. Trong lúc đèn trạng thái đang bật sáng, hãy phát âm một trong các khẩu lệnh điều khiển sau:
+   - Nói **"bật đèn"**: LED chính màu vàng (GPIO 2) sẽ bật sáng ở mức độ sáng mặc định (60%).
+   - Nói **"tắt đèn"**: LED chính sẽ tắt hoàn toàn.
+   - Nói **"sáng hơn"**: Độ sáng của LED chính sẽ tăng dần theo các cấp xung PWM (20% -> 60% -> 100%).
+3. Nếu muốn mô phỏng nhanh hoặc môi trường xung quanh quá ồn, hãy nhấp chuột trực tiếp vào các nút bấm tương ứng trên giao diện điều khiển ở góc dưới bên phải.
+
